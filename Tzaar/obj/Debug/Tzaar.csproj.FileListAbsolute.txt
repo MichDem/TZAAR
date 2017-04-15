@@ -1,6 +1,0 @@
-C:\Users\MM27P\Desktop\IO SHIT\PK4LAB5\Tzaar\Tzaar\bin\Debug\Tzaar.exe.config
-C:\Users\MM27P\Desktop\IO SHIT\PK4LAB5\Tzaar\Tzaar\bin\Debug\Tzaar.exe
-C:\Users\MM27P\Desktop\IO SHIT\PK4LAB5\Tzaar\Tzaar\bin\Debug\Tzaar.pdb
-C:\Users\MM27P\Desktop\IO SHIT\PK4LAB5\Tzaar\Tzaar\obj\Debug\Tzaar.csprojResolveAssemblyReference.cache
-C:\Users\MM27P\Desktop\IO SHIT\PK4LAB5\Tzaar\Tzaar\obj\Debug\Tzaar.exe
-C:\Users\MM27P\Desktop\IO SHIT\PK4LAB5\Tzaar\Tzaar\obj\Debug\Tzaar.pdb
