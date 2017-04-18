@@ -1,6 +1,7 @@
 package game;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * Represents board, including fields, and so on
@@ -8,43 +9,53 @@ import java.util.ArrayList;
  */
 public class Board {
 
-    private Field[] fields;
+    private static Field[] fields;
     private static Board instance;
+    private static Player blackRabbit, whiteRabbit; //Yeah... maybe someone would get that reference.
+
+    /**
+     * To avoid confusion:
+     *  | - vertical
+     *  \ - left
+     *  / - right
+     */
+    private static ArrayList<ArrayList<Field>> verticalAxis, leftAxis, rightAxis;   //Because rules of the game.
+
+    public static Player getBlackRabbit(){
+        return blackRabbit;
+    }
+
+    public static Player getWhiteRabbit(){
+        return whiteRabbit;
+    }
 
     class Field{
-        private int x, y;   //Position
         private static final int MAXTAB = 6;
-        private int number;
         private ArrayList<Field> neighbours;
-        private int[][] moveDirection;      //TODO zrobić jako stałą tablicę
-        private Field(int numberl, int x, int y){
-            number = numberl;
-            this.x = x;
-            this.y = y;
-            moveDirection = new int[6][2];
-            neighbours = new ArrayList<>(6);
-        }
+        //private int[][] moveDirection;      //zrobić jako stałą tablicę
+        private Piece piece;
+        private int number;
         private Field(int number){
             this.number = number;
             neighbours = new ArrayList<>(6);
         }
 
-        private void addNeighbour(Field other){
+        /*private void addNeighbour(Field other){
             if(other==null)
                 return;
             this.neighbours.add(other);
             other.neighbours.add(this);
-        }
+        }*/
 
-        private void addField(Field field){
+        /*private void addField(Field field){
             for(int i=0;i<MAXTAB;i++){
                 if(neighbours.get(i)==null){
                     neighbours.set(i,field);
                     return;
                 }
             }
-        }
-        private void setMoveDirection(){
+        }*/
+        /*private void setMoveDirection(){
             moveDirection[0][0] = -1;
             moveDirection[0][1] = 1;
             moveDirection[1][0] = 1;
@@ -57,7 +68,7 @@ public class Board {
             moveDirection[4][1] = -1;
             moveDirection[5][0] = -2;
             moveDirection[5][1] = 0;
-        }
+        }*/
 
     }
 
@@ -67,17 +78,95 @@ public class Board {
         for(int i=0;i<fields.length;i++){
             fields[i] = new Field(i);
         }
-        initFields();
+        blackRabbit = new Player(Color.BLACK);
+        whiteRabbit = new Player(Color.WHITE);
+        initAxis();
+        //System.out.println("Board inited");
+        placePieces();
+
     }
 
-    /**
-     * @param piece
-     */
-    public void place(Piece piece) throws IllegalMoveException {
-        throw new IllegalMoveException("");
+    private static void placePieces(){
+        ArrayList<Piece> pieces = new ArrayList<>();
+        if(blackRabbit==null)
+            System.out.println("Is null");
+        pieces.addAll(blackRabbit.getPieces());
+        pieces.addAll(whiteRabbit.getPieces());
+        Collections.shuffle(pieces);
+        for(int i=0;i<fields.length;i++){
+            fields[i].piece = pieces.get(i);
+        }
     }
 
-    private void initFields(){
+    public enum MoveType{
+        CAPTURE, BUFF, ILLEGAL
+    }
+
+    public static MoveType checkType(int source, int destination){
+        if(fields[destination].piece==null)
+            //throw new IllegalMoveException("Moved to empty field");
+            return MoveType.ILLEGAL;
+        if(fields[source].piece==null)
+            //throw new IllegalMoveException("No piece to move");
+            return MoveType.ILLEGAL;
+        if(!validateMove(source,destination))
+            //throw new IllegalMoveException("Illegal move");
+            return MoveType.ILLEGAL;
+        if(fields[source].piece.getColor()==fields[destination].piece.getColor())
+            return MoveType.BUFF;
+        return MoveType.CAPTURE;
+    }
+
+    public static void move(int source, int destination) throws IllegalMoveException {
+
+
+        Piece old = fields[destination].piece;
+        if(fields[source].piece.getColor()==fields[destination].piece.getColor()){
+            //Same color
+            fields[destination].piece = fields[source].piece;
+            fields[source].piece = null;
+            fields[destination].piece.add(old);
+        }else{
+            if(fields[destination].piece.getPower()>fields[source].piece.getPower()){
+                throw new IllegalMoveException("Could not hit piece");
+            }
+            fields[destination].piece = fields[source].piece;
+            fields[source].piece = null;
+            fields[destination].piece.hit(old);
+        }
+        if(old.getColor()==Color.BLACK)
+            blackRabbit.remove(old);
+        else
+            whiteRabbit.remove(old);
+    }
+
+    private static boolean validateMove(int source, int destination) {
+        //First we join all axises, to avoid redundancy
+        ArrayList<ArrayList<Field>> allAxises = new ArrayList<>();
+        allAxises.addAll(verticalAxis);
+        allAxises.addAll(leftAxis);
+        allAxises.addAll(rightAxis);
+
+        for(ArrayList<Field> fields : allAxises){
+            boolean foundFirst = false;
+            for(int i=0;i<fields.size();i++){
+                if(!foundFirst && (fields.get(i).number==source || fields.get(i).number==destination)){
+                    foundFirst = true;  //Found first piece
+                }else if(foundFirst && (fields.get(i).number==source || fields.get(i).number==destination)){
+                    return true;    //Found second piece && there were no pieces in between
+                }else if(foundFirst && fields.get(i).piece!=null){
+                    foundFirst = false;     //Found first piece, but there was another piece next to it that was not the one we've been looking for
+                }
+            }
+        }
+        return false;
+    }
+
+    public static Piece getPiece(int index){
+        return fields[index].piece;
+    }
+
+    private void initAxis(){
         Field[][] raws = new Field[9][];
         for(int i=0;i<5;i++){
             raws[i] = new Field[5 + i];
@@ -96,32 +185,74 @@ public class Board {
                 }
             }
         }
-        //And now for magic...
-        //Adding "vertical" relations
+
+        verticalAxis = new ArrayList<>();
+        leftAxis = new ArrayList<>();
+        rightAxis = new ArrayList<>();
+
+        ArrayList<Field> tmp;
         for(int i=0;i<raws.length;i++){
-            for(int j=0;j<raws[i].length-1;j++){
-                if(raws[i][j]!=null){
-                    raws[i][j].addNeighbour(raws[i][j+1]);
-                }
+            tmp = new ArrayList<>();
+            for(int j=0;j<raws[i].length;j++){
+                tmp.add(raws[i][j]);
             }
+            verticalAxis.add(tmp);
         }
-        //Now for askew relations - left side:
+
+        //Now left
+        //It must be sorted, but in whatever direction
+        //Sorting is achieved by adding in correct order
+        for(int i=0;i<raws.length;i++){     //AKA 9 times
+            leftAxis.add(new ArrayList<>());
+        }
         for(int i=0;i<5;i++){
             for(int j=0;j<raws[i].length;j++){
-                //There always is piece [i+1][j] and [i+1][j+1], no risk of IndexOutOfBounds
-                raws[i][j].addNeighbour(raws[i+1][j]);
-                raws[i][j].addNeighbour(raws[i+1][j+1]);
+                leftAxis.get(j).add(raws[i][j]);
             }
         }
-        //and right side:
-        for(int i=raws.length-1;i>5;i--){
+        for(int i=5;i<raws.length;i++){
             for(int j=0;j<raws[i].length;j++){
-                //This time, there'll always be [i-1][j] and [i-1][j+1] piece
-                raws[i][j].addNeighbour(raws[i-1][j]);
-                raws[i][j].addNeighbour(raws[i-1][j+1]);
+                leftAxis.get(i-4+j).add(raws[i][j]);
             }
         }
-        //And that's IT!
+
+        //And now the same thing but for right axis
+        for(int i=0;i<raws.length;i++){
+            rightAxis.add(new ArrayList<>());
+        }
+        for(int i=raws.length-1;i>=4;i--){
+            for(int j=0;j<raws[i].length;j++){
+                rightAxis.get(j).add(raws[i][j]);
+            }
+        }
+        for(int i=3;i>=0;i--){
+            for(int j=0;j<raws[i].length;j++){
+                rightAxis.get(4-i+j).add(raws[i][j]);
+            }
+        }
+        removeNullsFromAxe(verticalAxis);
+        removeNullsFromAxe(leftAxis);
+        removeNullsFromAxe(rightAxis);
+    }
+
+    private void removeNullsFromAxe(ArrayList<ArrayList<Field>> original){
+        ArrayList<ArrayList<Field>> copy = new ArrayList<>();
+        ArrayList<Field> row;
+        copy.addAll(original);
+        original.clear();
+        for(ArrayList<Field> fields : copy){
+            row = new ArrayList<>();
+            for(Field field : fields){
+                if(field!=null)
+                    row.add(field);
+                else{
+                    original.add(row);
+                    row = new ArrayList<>();
+                }
+            }
+            original.add(row);
+            row = new ArrayList<>();
+        }
     }
 
     static{
