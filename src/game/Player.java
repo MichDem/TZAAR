@@ -15,7 +15,7 @@ public class Player {
     private List<Piece> pieces;
     private Color color;
 
-    public Player(Color color){
+    Player(Color color){
         this.color = color;
         pieces = new ArrayList<>(PIECES);
         for(int i=0;i<TZAAR_NUM;i++){
@@ -29,16 +29,55 @@ public class Player {
         }
     }
 
-    private boolean check(Piece.Type type){
+    public Color getColor(){
+        return color;
+    }
+
+    List<Piece> getPieces(){
+        return pieces;
+    }
+
+    /*private boolean check(Piece.Type type){
         for(Piece piece : pieces){
             if(piece.getType() == type)
                 return true;
         }
         return false;
+    }*/
+
+    public boolean hasLost(){
+        //return(!check(Piece.Type.TOTT) || check(Piece.Type.TZAAR) || check(Piece.Type.TZARR));
+        return (getTottsNum()*getTzaarsNum()*getTzarrsNum() == 0);
     }
 
-    public boolean hasWon(){
-        return(!check(Piece.Type.TOTT) || check(Piece.Type.TZAAR) || check(Piece.Type.TZARR));
+    void remove(Piece piece) {
+        pieces.remove(piece);
     }
 
+    public int getTottsNum() {
+        int result = 0;
+        for(Piece piece : pieces){
+            if(piece.getType()== Piece.Type.TOTT)
+                result++;
+        }
+        return result;
+    }
+
+    public int getTzaarsNum() {
+        int result = 0;
+        for(Piece piece : pieces){
+            if(piece.getType()== Piece.Type.TZAAR)
+                result++;
+        }
+        return result;
+    }
+
+    public int getTzarrsNum() {
+        int result = 0;
+        for(Piece piece : pieces){
+            if(piece.getType()== Piece.Type.TZARR)
+                result++;
+        }
+        return result;
+    }
 }
