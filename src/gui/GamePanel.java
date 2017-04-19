@@ -96,9 +96,9 @@ public class GamePanel extends JPanel {
         buttons.get(index).setUnpressed();
     }
 
-    private static void prepareIcons() throws IOException {
-        String path = "resources/";
-        board = new ImageIcon(ImageIO.read(new File(path + "Board.png")));
+    private void prepareIcons() throws IOException {
+        String path = "/"; //resources/";
+        board = new ImageIcon(ImageIO.read(getClass().getResourceAsStream((path + "Board.png"))));
     }
 
     GamePanel() throws IOException {

@@ -6,7 +6,6 @@ import game.Piece;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.io.File;
 import java.io.IOException;
 
 /**
@@ -24,28 +23,31 @@ class PieceButton extends JButton {
      */
 
     private static ImageIcon[][][] icons = null;
-    private static final String RESOURCE_PATH = "resources/";
+    private static final String RESOURCE_PATH = "/";//"/resources/";
 
     private static final Font unselected = new Font("Arial", Font.PLAIN, 12);
             //selected = new Font("Arial", Font.BOLD,24);
 
-    private static void initIcons() throws IOException {
+    private void initIcons() throws IOException {
         icons = new ImageIcon[2][2][3];
-        icons[0][0][0] = new ImageIcon(ImageIO.read(new File(RESOURCE_PATH + "bTott.png")));
-        icons[0][0][1] = new ImageIcon(ImageIO.read(new File(RESOURCE_PATH + "bTzaar.png")));
-        icons[0][0][2] = new ImageIcon(ImageIO.read(new File(RESOURCE_PATH + "bTzarr.png")));
 
-        icons[0][1][0] = new ImageIcon(ImageIO.read(new File(RESOURCE_PATH + "bhTott.png")));
-        icons[0][1][1] = new ImageIcon(ImageIO.read(new File(RESOURCE_PATH + "bhTzaar.png")));
-        icons[0][1][2] = new ImageIcon(ImageIO.read(new File(RESOURCE_PATH + "bhTzarr.png")));
 
-        icons[1][0][0] = new ImageIcon(ImageIO.read(new File(RESOURCE_PATH + "wTott.png")));
-        icons[1][0][1] = new ImageIcon(ImageIO.read(new File(RESOURCE_PATH + "wTzaar.png")));
-        icons[1][0][2] = new ImageIcon(ImageIO.read(new File(RESOURCE_PATH + "wTzarr.png")));
 
-        icons[1][1][0] = new ImageIcon(ImageIO.read(new File(RESOURCE_PATH + "whTott.png")));
-        icons[1][1][1] = new ImageIcon(ImageIO.read(new File(RESOURCE_PATH + "whTzaar.png")));
-        icons[1][1][2] = new ImageIcon(ImageIO.read(new File(RESOURCE_PATH + "whTzarr.png")));
+        icons[0][0][0] = new ImageIcon(ImageIO.read((getClass().getResourceAsStream(RESOURCE_PATH + "Pieces/bTott.png"))));
+        icons[0][0][1] = new ImageIcon(ImageIO.read((getClass().getResourceAsStream(RESOURCE_PATH + "Pieces/bTzaar.png"))));
+        icons[0][0][2] = new ImageIcon(ImageIO.read((getClass().getResourceAsStream(RESOURCE_PATH + "Pieces/bTzarr.png"))));
+
+        icons[0][1][0] = new ImageIcon(ImageIO.read((getClass().getResourceAsStream(RESOURCE_PATH + "Pieces/bhTott.png"))));
+        icons[0][1][1] = new ImageIcon(ImageIO.read((getClass().getResourceAsStream(RESOURCE_PATH + "Pieces/bhTzaar.png"))));
+        icons[0][1][2] = new ImageIcon(ImageIO.read((getClass().getResourceAsStream(RESOURCE_PATH + "Pieces/bhTzarr.png"))));
+
+        icons[1][0][0] = new ImageIcon(ImageIO.read((getClass().getResourceAsStream(RESOURCE_PATH + "Pieces/wTott.png"))));
+        icons[1][0][1] = new ImageIcon(ImageIO.read((getClass().getResourceAsStream(RESOURCE_PATH + "Pieces/wTzaar.png"))));
+        icons[1][0][2] = new ImageIcon(ImageIO.read((getClass().getResourceAsStream(RESOURCE_PATH + "Pieces/wTzarr.png"))));
+
+        icons[1][1][0] = new ImageIcon(ImageIO.read((getClass().getResourceAsStream(RESOURCE_PATH + "Pieces/whTott.png"))));
+        icons[1][1][1] = new ImageIcon(ImageIO.read((getClass().getResourceAsStream(RESOURCE_PATH + "Pieces/whTzaar.png"))));
+        icons[1][1][2] = new ImageIcon(ImageIO.read((getClass().getResourceAsStream(RESOURCE_PATH + "Pieces/whTzarr.png"))));
     }
 
     private int color, type;
