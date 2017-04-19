@@ -78,6 +78,8 @@ public class GameController implements ActionListener{
 
                 }
             }
+        }else if(ACTIONS.SKIP.name().equals(command)){
+            switchTure();
         }
 
         MainMenu.updateStats(Board.getBlackRabbit());
@@ -99,10 +101,12 @@ public class GameController implements ActionListener{
             }else{
                 nextMove = nextMoveType.ANY;
                 MainMenu.setCurrentMove("Any move");
+                MainMenu.showSkip();
             }
         }else{
             nextMove = nextMoveType.CAPTURE;
             MainMenu.setCurrentMove("Capture");
+            MainMenu.hideSkip();
             switchPlayer();
         }
     }
@@ -114,7 +118,7 @@ public class GameController implements ActionListener{
     }
 
     public enum ACTIONS{
-        FIELD
+        FIELD, SKIP
     }
 
     public GameController(){

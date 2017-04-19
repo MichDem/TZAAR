@@ -5,7 +5,6 @@ import game.*;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -107,6 +106,7 @@ public class GamePanel extends JPanel {
         JLabel gameBoard = new JLabel(board);
         gameController = new GameController();
         gameController.setBoardPanel(this);
+        MainMenu.setGameController(gameController);
 
         fillButtons();
         assignButtons();

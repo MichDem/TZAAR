@@ -7,6 +7,7 @@ import java.awt.*;
  * And... that's it
  * Created by miku on 11.04.17.
  */
+
 public class Main {
 
     public static void main(String[] args){

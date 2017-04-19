@@ -1,5 +1,6 @@
 package gui;
 
+import functionalities.GameController;
 import game.*;
 
 import javax.swing.*;
@@ -16,6 +17,7 @@ public class MainMenu extends JPanel{
     private static final Color bgColor = new Color(0x424f5a);
     private static JLabel currentTure;
     private static JLabel currentMove;
+    private static JButton skipButton;
     private static MainMenu instance;
 
     /**
@@ -25,6 +27,8 @@ public class MainMenu extends JPanel{
      */
     //private static JLabel bTott, bTzaar, bTzarr, wTott, wTzaar, wTzarr;
     private static JLabel[][] info;
+    private static GameController gameController;
+    public static final String VERSION = "0.4";
 
 
     private MainMenu() {
@@ -33,7 +37,7 @@ public class MainMenu extends JPanel{
         this.setBackground(bgColor);
         this.setPreferredSize(new Dimension(200,0));
 
-        JLabel version = new JLabel("Version: 0.3");
+        JLabel version = new JLabel("Version: " + VERSION);
         version.setForeground(Color.WHITE);
 
         currentMove = new JLabel("Capture");
@@ -42,15 +46,40 @@ public class MainMenu extends JPanel{
         currentTure = new JLabel("White");
         currentTure.setForeground(Color.WHITE);
 
-        //String[] columnNames = {"","Black","White"};
+        initSkipButton();
 
         this.add(version);
         this.add(currentTure);
         this.add(currentMove);
         this.add(Box.createVerticalStrut(100));
         this.add(setupInfoPanel());
+        this.add(Box.createVerticalStrut(100));
+        this.add(skipButton);
         this.add(Box.createVerticalStrut(4000));
         System.out.println("Done");
+    }
+
+    private static void initSkipButton(){
+        skipButton = new JButton("Skip move");
+        skipButton.setVisible(false);
+        skipButton.setActionCommand(GameController.ACTIONS.SKIP.name());
+        skipButton.setBackground(bgColor);
+        skipButton.setForeground(Color.WHITE);
+        //skipButton.addActionListener(gameController);
+
+    }
+
+    static void setGameController(GameController gameControllerl){
+        gameController = gameControllerl;
+        skipButton.addActionListener(gameController);
+    }
+
+    public static void showSkip(){
+        skipButton.setVisible(true);
+    }
+
+    public static void hideSkip(){
+        skipButton.setVisible(false);
     }
 
     private static JPanel setupInfoPanel(){
