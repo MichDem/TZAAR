@@ -93,22 +93,31 @@ public class GameController implements ActionListener{
     }
 
     private void switchTure() {
+        boolean canMakeMove;
         if(nextMove.equals(nextMoveType.CAPTURE) || nextMove.equals(nextMoveType.FIRST)){
             if(nextMove.equals(nextMoveType.FIRST)){
                 nextMove = nextMoveType.CAPTURE;
                 currentTure = Color.BLACK;
                 MainMenu.setCurrentTure("Black");
+                canMakeMove = Board.checkMove(currentTure,false);
             }else{
                 nextMove = nextMoveType.ANY;
                 MainMenu.setCurrentMove("Any move");
                 MainMenu.showSkip();
+                canMakeMove = Board.checkMove(currentTure,true);
             }
+
         }else{
             nextMove = nextMoveType.CAPTURE;
             MainMenu.setCurrentMove("Capture");
             MainMenu.hideSkip();
             switchPlayer();
+            canMakeMove = Board.checkMove(currentTure,false);
         }
+        if(!canMakeMove){
+            boardPanel.ups("Player " + currentTure.name() + " cannot make another move");
+        }
+        //Board.checkMove(currentTure,nextMove);
     }
 
     private GamePanel boardPanel;

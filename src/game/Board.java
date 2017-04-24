@@ -1,5 +1,7 @@
 package game;
 
+import functionalities.GameController;
+
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -27,6 +29,47 @@ public class Board {
 
     public static Player getWhiteRabbit(){
         return whiteRabbit;
+    }
+
+    public static boolean checkMove(Color currentTure, boolean anyMove) {
+        ArrayList<ArrayList<Field>> axises = new ArrayList<>();
+        axises.addAll(verticalAxis);
+        axises.addAll(leftAxis);
+        axises.addAll(rightAxis);
+
+        for(ArrayList<Field> axis : axises){
+            for(int i=0;i<axis.size();i++){
+                Piece current = axis.get(i).piece;
+                if(current != null && current.getColor()==currentTure){
+                    //check left first. Always left first
+                    int left=i-1;
+                    while(left>=0 && axis.get(left).piece==null)   //Get first piece left of current one
+                        left--;
+                    if(left>=0 && //If there is nothing on left will equal to -1
+                            axis.get(left).piece!=null && (//Just for safety
+                                anyMove || (//If anyMove then we don't care about color
+                                    axis.get(left).piece.getColor()!=currentTure && axis.get(left).piece.getPower()<=current.getPower() //Othervise we check if that piece has opposite color AND it's power is not greater then current
+                                )))
+                        return true;
+
+                    //Now for the establi... I mean - right
+                    int right=i+1;
+                    while(right<axis.size() && axis.get(right).piece==null)
+                        right++;
+                    if(right<axis.size() &&
+                            axis.get(right).piece!=null && (
+                                    anyMove || (
+                                        axis.get(right).piece.getColor()!=currentTure &&
+                                                axis.get(right).piece.getPower()<=current.getPower()
+                                    )))
+                        return true;
+
+
+                }
+            }
+        }
+
+        return false;
     }
 
     class Field{
